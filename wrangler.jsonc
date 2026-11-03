@@ -1,0 +1,11 @@
+{
+  // Minimal config for deploying ClassConnect AI as a static-assets site on
+  // Cloudflare Workers (Cloudflare's current recommended path for plain
+  // static sites — see README.md for deploy instructions). No bindings
+  // needed: this project has no backend, everything runs client-side.
+  "name": "classconnect-ai",
+  "compatibility_date": "2026-11-03",
+  "assets": {
+    "directory": "."
+  }
+}

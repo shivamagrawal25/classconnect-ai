@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClassConnect AI — Student</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand"><span class="mark">CC</span> ClassConnect AI</div>
+      <div class="who">
+        <div class="meta" id="who-meta" style="text-align:right">
+          <strong id="who-name">—</strong>
+          <span id="who-class">—</span>
+        </div>
+        <div class="avatar" id="who-avatar">—</div>
+        <button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <h1 class="page-title" id="greeting">Welcome back</h1>
+      <p class="page-subtitle">Everything for your class, in one place.</p>
+
+      <nav class="tabs" id="student-tabs">
+        <button class="tab" data-panel="panel-content" aria-selected="true">Content</button>
+        <button class="tab" data-panel="panel-assignments">Assignments</button>
+        <button class="tab" data-panel="panel-doubts">Doubts</button>
+        <button class="tab" data-panel="panel-studykit">Study Kit</button>
+        <button class="tab" data-panel="panel-planner">Exam Planner</button>
+        <button class="tab" data-panel="panel-ask">Ask the School</button>
+        <button class="tab" data-panel="panel-notices">Notices</button>
+      </nav>
+
+      <!-- CONTENT ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-content">
+        <div class="section-head">
+          <h2>Notes, worksheets &amp; videos</h2>
+          <span class="hint">Scoped to your class and section only</span>
+        </div>
+        <div class="card-grid" id="content-grid"></div>
+      </section>
+
+      <!-- ASSIGNMENTS ---------------------------------------------------- -->
+      <section class="tab-panel" id="panel-assignments">
+        <div class="section-head">
+          <h2>Assignments</h2>
+          <span class="hint">Submit before the due date to avoid a late mark</span>
+        </div>
+        <div id="assignments-list"></div>
+      </section>
+
+      <!-- DOUBTS ---------------------------------------------------------- -->
+      <section class="tab-panel" id="panel-doubts">
+        <div class="section-head">
+          <h2>Ask a doubt</h2>
+          <span class="hint">You'll get an instant AI first-pass answer, then your teacher's real reply</span>
+        </div>
+
+        <div class="ai-panel">
+          <form class="ai-panel-form" id="doubt-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="doubt-subject">Subject</label>
+                <select id="doubt-subject" required>
+                  <option value="">Choose a subject</option>
+                  <option>Biology</option>
+                  <option>Physics</option>
+                  <option>Chemistry</option>
+                  <option>Math</option>
+                  <option>Science</option>
+                  <option>History</option>
+                  <option>English</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="doubt-question">Your question</label>
+              <textarea id="doubt-question" rows="2" placeholder="e.g. Why do plants need sunlight for photosynthesis?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:fit-content">Ask</button>
+          </form>
+        </div>
+
+        <div id="doubts-list"></div>
+      </section>
+
+      <!-- STUDY KIT --------------------------------------------------------- -->
+      <section class="tab-panel" id="panel-studykit">
+        <div class="section-head">
+          <h2>Notes to Study Kit</h2>
+          <span class="hint">Paste a topic, get a summary, flashcards, and a quiz</span>
+        </div>
+
+        <div class="ai-panel">
+          <form class="ai-panel-form" id="studykit-form">
+            <div class="field">
+              <label for="studykit-input">Topic or pasted notes</label>
+              <textarea id="studykit-input" rows="2" placeholder="e.g. Photosynthesis, Newton's Laws, the French Revolution…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:fit-content">Generate study kit</button>
+          </form>
+          <div id="studykit-loading" class="loading-row" style="display:none">
+            <span class="spinner"></span> Building your study kit…
+          </div>
+          <div id="studykit-generated"></div>
+        </div>
+
+        <div class="ai-panel">
+          <span class="example-badge">Example</span>
+          <div id="studykit-example"></div>
+        </div>
+      </section>
+
+      <!-- EXAM PLANNER ------------------------------------------------------- -->
+      <section class="tab-panel" id="panel-planner">
+        <div class="section-head">
+          <h2>Exam Countdown Planner</h2>
+          <span class="hint">A real day-by-day schedule, computed from your exam date</span>
+        </div>
+
+        <div class="ai-panel">
+          <form class="ai-panel-form" id="planner-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="planner-date">Exam date</label>
+                <input id="planner-date" type="date" required />
+              </div>
+              <div class="field">
+                <label for="planner-hours">Hours available per day</label>
+                <input id="planner-hours" type="number" min="0.5" max="12" step="0.5" value="3" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="planner-subjects">Subjects (comma separated)</label>
+              <input id="planner-subjects" type="text" placeholder="e.g. Math, Biology, English" required />
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:fit-content">Build my plan</button>
+          </form>
+          <div id="planner-generated"></div>
+        </div>
+
+        <div class="ai-panel">
+          <span class="example-badge">Example</span>
+          <div id="planner-example"></div>
+        </div>
+      </section>
+
+      <!-- ASK THE SCHOOL ------------------------------------------------------- -->
+      <section class="tab-panel" id="panel-ask">
+        <div class="section-head">
+          <h2>Ask the School</h2>
+          <span class="hint">Searches every posted notice for your answer</span>
+        </div>
+
+        <div class="ai-panel">
+          <form class="ai-panel-form" id="ask-form">
+            <div class="field">
+              <label for="ask-input">Your question</label>
+              <input id="ask-input" type="text" placeholder="e.g. When is the final round of the web design competition?" required />
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:fit-content">Ask</button>
+          </form>
+          <div id="ask-loading" class="loading-row" style="display:none">
+            <span class="spinner"></span> Searching notices…
+          </div>
+          <div id="ask-result"></div>
+        </div>
+
+        <div class="ai-panel">
+          <span class="example-badge">Example</span>
+          <div id="ask-example"></div>
+        </div>
+      </section>
+
+      <!-- NOTICES ------------------------------------------------------------- -->
+      <section class="tab-panel" id="panel-notices">
+        <div class="section-head">
+          <h2>Notices</h2>
+        </div>
+        <div id="notices-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ai-mock.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClassConnect AI — Log in</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <aside class="auth-visual">
+      <div class="auth-brand">
+        <span class="mark">CC</span>
+        ClassConnect AI
+      </div>
+      <blockquote>
+        &ldquo;Everything the class WhatsApp group was trying to be — notes, assignments, doubts — in one place that actually remembers who you are.&rdquo;
+      </blockquote>
+      <div class="auth-stats">
+        <div><strong>4</strong><span>AI-powered tools</span></div>
+        <div><strong>2</strong><span>classes connected</span></div>
+        <div><strong>24/7</strong><span>doubt answering</span></div>
+      </div>
+    </aside>
+
+    <main class="auth-form-panel">
+      <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="subtitle">Log in to see your class's notes, assignments, and doubts.</p>
+
+        <div class="form-error" id="login-error"></div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-id">Roll number or teacher ID</label>
+            <input id="login-id" name="loginId" type="text" autocomplete="username" placeholder="e.g. 10A07" required />
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+
+        <p class="auth-switch">
+          New student? <a href="signup.html">Create an account</a>
+        </p>
+
+        <div class="demo-hint">
+          <strong>Judging this project?</strong> Use one of these to log in instantly:<br />
+          Teacher — ID <code>teacher</code>, password <code>teach123</code><br />
+          Student — ID <code>10A07</code>, password <code>student123</code>
+        </div>
+
+        <button type="button" class="reset-link" id="reset-demo-btn">Reset demo data</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // If someone's already logged in, skip straight to their dashboard.
+    (function redirectIfLoggedIn() {
+      const user = CC.Auth.currentUser();
+      if (user) {
+        window.location.href = user.role === "teacher" ? "admin.html" : "student.html";
+      }
+    })();
+
+    const form = document.getElementById("login-form");
+    const errorBox = document.getElementById("login-error");
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.add("visible");
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      errorBox.classList.remove("visible");
+      const loginId = form.loginId.value.trim();
+      const password = form.password.value;
+      const result = CC.Auth.login(loginId, password);
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      window.location.href = result.user.role === "teacher" ? "admin.html" : "student.html";
+    });
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2200);
+    }
+
+    document.getElementById("reset-demo-btn").addEventListener("click", () => {
+      if (!confirm("This clears every account, submission, and doubt added during this demo and reseeds the original data. Continue?")) return;
+      CC.Data.resetDemoData();
+      showToast("Demo data reset.");
+      setTimeout(() => window.location.reload(), 600);
+    });
+  </script>
+</body>
+</html>

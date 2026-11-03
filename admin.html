@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClassConnect AI — Teacher</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand"><span class="mark">CC</span> ClassConnect AI — Teacher</div>
+      <div class="who">
+        <div class="meta" id="who-meta" style="text-align:right">
+          <strong id="who-name">—</strong>
+          <span>Shared teacher account</span>
+        </div>
+        <div class="avatar" id="who-avatar">—</div>
+        <button class="btn btn-ghost btn-sm" id="reset-demo-btn">Reset demo data</button>
+        <button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <h1 class="page-title">Teacher dashboard</h1>
+      <p class="page-subtitle">You see every class. Students only see their own.</p>
+
+      <nav class="tabs" id="admin-tabs">
+        <button class="tab" data-panel="panel-students" aria-selected="true">Students</button>
+        <button class="tab" data-panel="panel-content">Content</button>
+        <button class="tab" data-panel="panel-assignments">Assignments</button>
+        <button class="tab" data-panel="panel-doubts">Doubts Queue</button>
+        <button class="tab" data-panel="panel-notices">Notices</button>
+      </nav>
+
+      <!-- STUDENTS ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-students">
+        <div class="panel">
+          <h3>Add a student directly</h3>
+          <form class="inline-form" id="add-student-form">
+            <div class="field"><label for="st-name">Full name</label><input id="st-name" required /></div>
+            <div class="field"><label for="st-roll">Roll number</label><input id="st-roll" required /></div>
+            <div class="field"><label for="st-class">Class</label><input id="st-class" placeholder="e.g. 10" required /></div>
+            <div class="field"><label for="st-section">Section</label><input id="st-section" placeholder="e.g. A" required /></div>
+            <div class="field"><label for="st-house">House</label><input id="st-house" placeholder="optional" /></div>
+            <div class="field"><label for="st-password">Password</label><input id="st-password" type="text" placeholder="e.g. student123" required /></div>
+            <button type="submit" class="btn btn-primary">Add student</button>
+          </form>
+        </div>
+
+        <div class="section-head"><h2>All students</h2><span class="hint" id="signup-code-hint"></span></div>
+        <div id="students-table"></div>
+      </section>
+
+      <!-- CONTENT ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-content">
+        <div class="panel">
+          <h3>Post new content</h3>
+          <form class="inline-form" id="add-content-form">
+            <div class="field"><label for="ct-title">Title</label><input id="ct-title" required /></div>
+            <div class="field">
+              <label for="ct-type">Type</label>
+              <select id="ct-type">
+                <option value="note">Note</option>
+                <option value="worksheet">Worksheet</option>
+                <option value="video_link">Video link</option>
+              </select>
+            </div>
+            <div class="field"><label for="ct-subject">Subject</label><input id="ct-subject" required /></div>
+            <div class="field"><label for="ct-class">Class</label><input id="ct-class" required /></div>
+            <div class="field"><label for="ct-section">Section</label><input id="ct-section" required /></div>
+            <div class="field" style="grid-column:1/-1"><label for="ct-body">Note/worksheet text, or video URL</label><textarea id="ct-body" rows="3" required></textarea></div>
+            <button type="submit" class="btn btn-primary">Post content</button>
+          </form>
+        </div>
+        <div class="section-head"><h2>Everything posted</h2></div>
+        <div id="content-table"></div>
+      </section>
+
+      <!-- ASSIGNMENTS ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-assignments">
+        <div class="panel">
+          <h3>Create an assignment</h3>
+          <form class="inline-form" id="add-assignment-form">
+            <div class="field"><label for="as-title">Title</label><input id="as-title" required /></div>
+            <div class="field"><label for="as-subject">Subject</label><input id="as-subject" required /></div>
+            <div class="field"><label for="as-class">Class</label><input id="as-class" required /></div>
+            <div class="field"><label for="as-section">Section</label><input id="as-section" required /></div>
+            <div class="field"><label for="as-due">Due date</label><input id="as-due" type="date" required /></div>
+            <div class="field" style="grid-column:1/-1"><label for="as-instructions">Instructions</label><textarea id="as-instructions" rows="2" required></textarea></div>
+            <button type="submit" class="btn btn-primary">Create assignment</button>
+          </form>
+        </div>
+        <div class="section-head"><h2>All assignments</h2></div>
+        <div id="assignments-admin-list"></div>
+      </section>
+
+      <!-- DOUBTS QUEUE ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-doubts">
+        <div class="section-head">
+          <h2>Doubts queue</h2>
+          <span class="hint">Pending questions appear first</span>
+        </div>
+        <div class="panel" id="doubts-queue"></div>
+      </section>
+
+      <!-- NOTICES ------------------------------------------------------ -->
+      <section class="tab-panel" id="panel-notices">
+        <div class="panel">
+          <h3>Post a notice</h3>
+          <form class="inline-form" id="add-notice-form">
+            <div class="field"><label for="no-title">Title</label><input id="no-title" required /></div>
+            <div class="field">
+              <label for="no-category">Category</label>
+              <select id="no-category">
+                <option value="general">General</option>
+                <option value="academic">Academic</option>
+                <option value="event">Event</option>
+                <option value="competition">Competition</option>
+              </select>
+            </div>
+            <div class="field" style="grid-column:1/-1"><label for="no-body">Body</label><textarea id="no-body" rows="2" required></textarea></div>
+            <button type="submit" class="btn btn-primary">Post notice</button>
+          </form>
+        </div>
+        <div class="section-head"><h2>Posted notices</h2></div>
+        <div id="notices-admin-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
