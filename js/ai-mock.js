@@ -362,7 +362,7 @@ var CC = window.CC || (window.CC = {});
   // LIVE AI first (Workers AI), with curated kits and the template as fallbacks.
   // Returns { topic, isFallback, summary, flashcards, quiz, simplified }.
   CC.AI.generateStudyKit = async function generateStudyKit(topicInput) {
-    const live = await callLiveAI("/api/studykit", { topic: topicInput }, 30000);
+    const live = await callLiveAI("/api/studykit", { topic: topicInput }, 45000);
     if (live && live.summary && Array.isArray(live.flashcards) && Array.isArray(live.quiz)) {
       return {
         topic: live.topic || topicInput,
