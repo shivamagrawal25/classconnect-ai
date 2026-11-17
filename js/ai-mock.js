@@ -1,6 +1,12 @@
 /**
  * ai-mock.js — the app's "AI" layer.
  *
+ * UPDATE: answerDoubt() and generateStudyKit() now call a real model
+ * (Google Gemma 4 on Cloudflare Workers AI) through /api/doubt and
+ * /api/studykit in worker/index.js. If that call fails or times out, they
+ * fall back to the simulated behaviour described below, so the app always
+ * answers.
+ *
  * HONESTY NOTE (read this before anything else in the file): two of the four
  * AI features here are simulated, and two are genuinely computed. This file
  * says which is which at the top of each function, not just here, because
@@ -129,12 +135,38 @@ var CC = window.CC || (window.CC = {});
 
   CC.AI = CC.AI || {};
 
-  // SIMULATED. See the file header. Always resolves — there is no "AI failed"
-  // state in this prototype, since nothing is actually being called.
+  // Calls the site's own Worker (worker/index.js), which runs a real model on
+  // Cloudflare Workers AI. Returns null on any failure or timeout, so callers
+  // can fall back to the simulated answers and the demo never breaks.
+  async function callLiveAI(path, body, timeoutMs) {
+    if (location.protocol === "file:") return null;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // LIVE AI first (Workers AI), with the simulated answer as a fallback.
   CC.AI.answerDoubt = async function answerDoubt(subject, question) {
+    const live = await callLiveAI("/api/doubt", { subject, question }, 20000);
+    if (live && typeof live.answer === "string" && live.answer.trim()) {
+      return { answer: live.answer.trim(), source: "live" };
+    }
     await delay(THINKING_DELAY_MS);
     const match = bestKeywordMatch(`${subject} ${question}`, DOUBT_EXAMPLES);
-    return { answer: match ? match.answer : doubtFallback(subject, question) };
+    return { answer: match ? match.answer : doubtFallback(subject, question), source: "simulated" };
   };
 
   // -----------------------------------------------------------------------
@@ -327,8 +359,21 @@ var CC = window.CC || (window.CC = {});
     };
   }
 
-  // SIMULATED. Returns { topic, isFallback, summary, flashcards, quiz, simplified }.
+  // LIVE AI first (Workers AI), with curated kits and the template as fallbacks.
+  // Returns { topic, isFallback, summary, flashcards, quiz, simplified }.
   CC.AI.generateStudyKit = async function generateStudyKit(topicInput) {
+    const live = await callLiveAI("/api/studykit", { topic: topicInput }, 30000);
+    if (live && live.summary && Array.isArray(live.flashcards) && Array.isArray(live.quiz)) {
+      return {
+        topic: live.topic || topicInput,
+        isFallback: false,
+        source: "live",
+        summary: live.summary,
+        flashcards: live.flashcards,
+        quiz: live.quiz,
+        simplified: live.simplified || "",
+      };
+    }
     await delay(THINKING_DELAY_MS);
     const match = bestKeywordMatch(topicInput, STUDY_KIT_EXAMPLES);
     if (match) {

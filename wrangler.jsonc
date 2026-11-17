@@ -1,11 +1,15 @@
 {
-  // Minimal config for deploying ClassConnect AI as a static-assets site on
-  // Cloudflare Workers (Cloudflare's current recommended path for plain
-  // static sites — see README.md for deploy instructions). No bindings
-  // needed: this project has no backend, everything runs client-side.
-  "name": "classconnect-ai",
+  // The static site is served as assets; requests to /api/* go to the Worker
+  // in worker/index.js, which calls Cloudflare Workers AI through the AI binding.
+  "name": "class-connect-ai",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-03",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "ai": {
+    "binding": "AI"
   }
 }
