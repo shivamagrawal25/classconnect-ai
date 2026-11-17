@@ -11,5 +11,11 @@
   },
   "ai": {
     "binding": "AI"
+  },
+  // Preview builds (non-main branches) need their own copy of the binding.
+  "previews": {
+    "ai": {
+      "binding": "AI"
+    }
   }
 }
