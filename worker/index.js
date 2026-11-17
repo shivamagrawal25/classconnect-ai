@@ -40,7 +40,14 @@ function clean(value, max) {
 }
 
 async function runModel(env, messages, maxTokens) {
-  const out = await env.AI.run(MODEL, { messages, max_tokens: maxTokens, temperature: 0.4 });
+  // The model reasons before answering; turning that off keeps replies fast,
+  // and a generous token limit stops reasoning from crowding out the answer.
+  const out = await env.AI.run(MODEL, {
+    messages,
+    max_tokens: maxTokens,
+    temperature: 0.4,
+    chat_template_kwargs: { enable_thinking: false },
+  });
   const text =
     typeof out === "string" ? out : (out && (out.response ?? out.choices?.[0]?.message?.content)) || "";
   return String(text).replace(/<think>[\s\S]*?<\/think>/g, "").trim();
@@ -64,12 +71,9 @@ async function doubt(request, env) {
       },
       { role: "user", content: `Subject: ${subject}\nDoubt: ${question}` },
     ],
-    400
+    1500
   );
-  if (!answer) {
-    const raw = await env.AI.run(MODEL, { messages: [{ role: "user", content: "Say hello." }], max_tokens: 200 });
-    return json({ error: "Empty answer", debug: JSON.stringify(raw).slice(0, 1500) }, 502);
-  }
+  if (!answer) return json({ error: "Empty answer" }, 502);
   return json({ answer });
 }
 
@@ -92,7 +96,7 @@ async function studyKit(request, env) {
       },
       { role: "user", content: `Topic or notes: ${topic}` },
     ],
-    2500
+    5000
   );
 
   const kit = parseKit(raw);
