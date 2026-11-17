@@ -66,7 +66,10 @@ async function doubt(request, env) {
     ],
     400
   );
-  if (!answer) return json({ error: "Empty answer" }, 502);
+  if (!answer) {
+    const raw = await env.AI.run(MODEL, { messages: [{ role: "user", content: "Say hello." }], max_tokens: 200 });
+    return json({ error: "Empty answer", debug: JSON.stringify(raw).slice(0, 1500) }, 502);
+  }
   return json({ answer });
 }
 
